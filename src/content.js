@@ -173,19 +173,32 @@
             const shippingTable = document.querySelector('.shipping-table');
             
             if (shippingTable) {
-                // Find all cells that might contain prices
-                const cells = shippingTable.querySelectorAll('td');
+                // Find all rows in the shipping table
+                const rows = shippingTable.querySelectorAll('tbody tr');
                 let minDelivery = null;
                 
-                for (const cell of cells) {
-                    const text = cell.textContent.trim();
-                    const amount = utils.extractCurrency(text);
-                    
-                    if (amount !== null) {
-                        // Take the cheapest delivery option
-                        if (minDelivery === null || amount < minDelivery) {
-                            minDelivery = amount;
-                            utils.debug('Found delivery option:', { text, amount, cell });
+                for (const row of rows) {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 2) {
+                        const descriptionCell = cells[0];
+                        const priceCell = cells[1];
+                        
+                        const description = descriptionCell.textContent.trim().toLowerCase();
+                        const priceText = priceCell.textContent.trim();
+                        const amount = utils.extractCurrency(priceText);
+                        
+                        // Skip collection options (they contain "collection" in the description)
+                        if (description.includes('collection')) {
+                            utils.debug('Skipping collection option:', { description, amount });
+                            continue;
+                        }
+                        
+                        if (amount !== null) {
+                            // Take the cheapest actual delivery option (not collection)
+                            if (minDelivery === null || amount < minDelivery) {
+                                minDelivery = amount;
+                                utils.debug('Found delivery option:', { description, amount, priceText });
+                            }
                         }
                     }
                 }
@@ -319,7 +332,7 @@
                 const buyerPremium = minBid * 0.25;
                 const vatBuyerPremium = buyerPremium * 0.2;
                 const vatDelivery = (delivery || 0) * 0.2;
-                const finalPrice = Math.round(minBid + vat + buyerPremium + vatBuyerPremium + (delivery || 0) + vatDelivery);
+                const finalPrice = minBid + vat + buyerPremium + vatBuyerPremium + (delivery || 0) + vatDelivery;
                 
                 utils.debug('Price calculation:', {
                     minBid,
@@ -371,7 +384,7 @@
                 const buyerPremium = minBid * 0.25;
                 const vatBuyerPremium = buyerPremium * 0.2;
                 const vatDelivery = (delivery || 0) * 0.2;
-                finalPrice = Math.round(minBid + vat + buyerPremium + vatBuyerPremium + (delivery || 0) + vatDelivery);
+                finalPrice = minBid + vat + buyerPremium + vatBuyerPremium + (delivery || 0) + vatDelivery;
             } else {
                 error = 'Minimum bid not found';
             }

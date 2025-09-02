@@ -124,18 +124,3 @@ self.addEventListener('beforeunload', () => {
     console.log('Background script unloading');
 });
 
-// Keep service worker alive with periodic tasks (if needed)
-// This is optional and should only be used if necessary
-const KEEP_ALIVE_INTERVAL = 25000; // 25 seconds
-
-let keepAliveTimer;
-
-function keepAlive() {
-    keepAliveTimer = setTimeout(() => {
-        console.log('Service worker keep-alive ping');
-        keepAlive();
-    }, KEEP_ALIVE_INTERVAL);
-}
-
-// Start keep-alive (comment out if not needed)
-// keepAlive();
