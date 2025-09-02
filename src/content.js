@@ -358,6 +358,35 @@
         },
 
         /**
+         * Store calculation data globally for popup access
+         */
+        storeCalculationData: function() {
+            const minBid = this.findMinimumBid();
+            const delivery = this.findDeliveryCost();
+            let finalPrice = null;
+            let error = null;
+
+            if (minBid !== null) {
+                const vat = minBid * 0.2;
+                const buyerPremium = minBid * 0.25;
+                const vatBuyerPremium = buyerPremium * 0.2;
+                const vatDelivery = (delivery || 0) * 0.2;
+                finalPrice = Math.round(minBid + vat + buyerPremium + vatBuyerPremium + (delivery || 0) + vatDelivery);
+            } else {
+                error = 'Minimum bid not found';
+            }
+
+            window.johnPyePriceData = {
+                finalPrice,
+                minBid,
+                delivery,
+                error
+            };
+
+            utils.debug('Price data stored:', window.johnPyePriceData);
+        },
+
+        /**
          * Initialize the extension
          */
         init: function() {
@@ -379,34 +408,8 @@
                 setTimeout(() => this.calculateAndDisplay(), 1000);
             }
             
-            // Also watch for dynamic content changes
-            const observer = new MutationObserver((mutations) => {
-                let shouldRecalculate = false;
-                
-                mutations.forEach((mutation) => {
-                    // Check if any added nodes might contain price information
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            const element = node;
-                            if (element.textContent.includes('£') || 
-                                CONFIG.patterns.deliveryText.test(element.textContent.toLowerCase()) ||
-                                element.querySelector && element.querySelector(CONFIG.selectors.minBid)) {
-                                shouldRecalculate = true;
-                            }
-                        }
-                    });
-                });
-                
-                if (shouldRecalculate) {
-                    utils.debug('DOM changes detected, recalculating...');
-                    setTimeout(() => this.calculateAndDisplay(), 500);
-                }
-            });
-            
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
+            // Store data for popup to access
+            this.storeCalculationData();
             
             utils.debug('Extension initialized successfully');
         }
@@ -414,5 +417,31 @@
 
     // Start the extension
     finalPriceCalculator.init();
+
+    // Make the calculator globally available for popup communication
+    window.finalPriceCalculator = finalPriceCalculator;
+
+    // Listen for messages from popup
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.action === 'getPriceData') {
+            // Refresh data and return it
+            finalPriceCalculator.storeCalculationData();
+            const data = window.johnPyePriceData || {
+                finalPrice: null,
+                minBid: null,
+                delivery: null,
+                error: 'No data available'
+            };
+            
+            sendResponse({ success: true, data: data });
+        } else if (message.action === 'recalculate') {
+            // Trigger recalculation and update display
+            finalPriceCalculator.calculateAndDisplay();
+            finalPriceCalculator.storeCalculationData();
+            sendResponse({ success: true });
+        }
+        
+        return true; // Keep the message channel open
+    });
 
 })();
