@@ -1,0 +1,53 @@
+{
+  "name": "johnpye-final-price-plugin",
+  "version": "1.0.0",
+  "description": "Browser extension to calculate and display final prices on John Pye Auctions lot detail pages",
+  "main": "src/content.js",
+  "scripts": {
+    "build": "npm run build:chrome && npm run build:firefox",
+    "build:chrome": "npm run clean:chrome && npm run copy:chrome && npm run manifest:chrome",
+    "build:firefox": "npm run clean:firefox && npm run copy:firefox && npm run manifest:firefox",
+    "clean": "npm run clean:chrome && npm run clean:firefox",
+    "clean:chrome": "rm -rf dist/chrome",
+    "clean:firefox": "rm -rf dist/firefox",
+    "copy:chrome": "mkdir -p dist/chrome && cp -r src/* dist/chrome/",
+    "copy:firefox": "mkdir -p dist/firefox && cp -r src/* dist/firefox/",
+    "manifest:chrome": "cp manifests/chrome.json dist/chrome/manifest.json",
+    "manifest:firefox": "cp manifests/firefox.json dist/firefox/manifest.json",
+    "dev": "npm run build && npm run watch",
+    "watch": "nodemon --watch src --watch manifests --exec 'npm run build'",
+    "package:chrome": "cd dist/chrome && zip -r ../../johnpye-extension-chrome.zip .",
+    "package:firefox": "cd dist/firefox && zip -r ../../johnpye-extension-firefox.zip .",
+    "package": "npm run build && npm run package:chrome && npm run package:firefox",
+    "lint": "eslint src/",
+    "test": "echo 'No tests specified yet'"
+  },
+  "keywords": [
+    "browser-extension",
+    "chrome-extension",
+    "firefox-addon",
+    "auction",
+    "price-calculator",
+    "webextensions"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "nodemon": "^3.0.2"
+  },
+  "dependencies": {
+    "webextension-polyfill": "^0.10.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username/johnpye-final-price-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/johnpye-final-price-plugin/issues"
+  },
+  "homepage": "https://github.com/username/johnpye-final-price-plugin#readme"
+}

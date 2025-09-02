@@ -1,0 +1,53 @@
+{
+  "manifest_version": 2,
+  "name": "John Pye Final Price Calculator",
+  "version": "1.0.0",
+  "description": "Calculates and displays the final price (minimum bid + delivery) on John Pye Auctions lot detail pages",
+  "permissions": [
+    "activeTab",
+    "https://www.johnpyeauctions.co.uk/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.johnpyeauctions.co.uk/Event/LotDetails/*"
+      ],
+      "js": [
+        "lib/webextension-polyfill.js",
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "John Pye Final Price Calculator",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "web_accessible_resources": [
+    "icons/*"
+  ],
+  "applications": {
+    "gecko": {
+      "strict_min_version": "55.0"
+    }
+  }
+}

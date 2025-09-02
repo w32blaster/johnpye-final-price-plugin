@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Pye Final Price Calculator</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <header class="popup-header">
+            <div class="icon">💰</div>
+            <div class="title">
+                <h1>Final Price Calculator</h1>
+                <p>John Pye Auctions</p>
+            </div>
+        </header>
+        
+        <main class="popup-content">
+            <div class="status-section">
+                <div id="status" class="status">
+                    <span class="status-indicator" id="statusIndicator">⏳</span>
+                    <span class="status-text" id="statusText">Checking page...</span>
+                </div>
+            </div>
+            
+            <div class="price-section" id="priceSection" style="display: none;">
+                <div class="price-display">
+                    <div class="label">Final Price:</div>
+                    <div class="price" id="finalPrice">-</div>
+                </div>
+                
+                <div class="breakdown">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Minimum bid:</span>
+                        <span class="breakdown-value" id="minBid">-</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Delivery:</span>
+                        <span class="breakdown-value" id="deliveryCost">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="error-message">
+                    <span class="error-icon">⚠️</span>
+                    <span id="errorText">Unable to calculate price</span>
+                </div>
+                <div class="error-details" id="errorDetails"></div>
+            </div>
+        </main>
+        
+        <footer class="popup-footer">
+            <div class="actions">
+                <button id="refreshBtn" class="btn btn-primary">Refresh</button>
+                <button id="settingsBtn" class="btn btn-secondary">Settings</button>
+            </div>
+            
+            <div class="help-text">
+                <small>Navigate to a John Pye auction lot page to see the final price calculation.</small>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+/* John Pye Final Price Calculator - Popup Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 350px;
+    min-height: 400px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #333;
+}
+
+.popup-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 400px;
+}
+
+/* Header */
+.popup-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+}
+
+.popup-header .icon {
+    font-size: 32px;
+    margin-right: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.popup-header .title h1 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.popup-header .title p {
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+/* Main Content */
+.popup-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Status Section */
+.status-section {
+    margin-bottom: 20px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-indicator {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.status-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status.active {
+    border-left: 4px solid #28a745;
+}
+
+.status.error {
+    border-left: 4px solid #dc3545;
+}
+
+.status.inactive {
+    border-left: 4px solid #ffc107;
+}
+
+/* Price Section */
+.price-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.price-display {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.price-display .label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #28a745;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.price-display .price {
+    font-size: 28px;
+    font-weight: 700;
+    color: #dc3545;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.breakdown-label {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.breakdown-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Error Section */
+.error-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #dc3545;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.error-icon {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.error-message span:last-child {
+    font-size: 14px;
+    font-weight: 600;
+    color: #dc3545;
+}
+
+.error-details {
+    font-size: 12px;
+    color: #6c757d;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* Footer */
+.popup-footer {
+    background: #fff;
+    padding: 15px 20px;
+    border-top: 1px solid #dee2e6;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: #28a745;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #218838;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.help-text {
+    text-align: center;
+    line-height: 1.4;
+}
+
+.help-text small {
+    font-size: 11px;
+    color: #6c757d;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.price-section,
+.error-section {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading animation for status indicator */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.status-indicator.loading {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 320px) {
+    body {
+        width: 300px;
+    }
+    
+    .popup-header {
+        padding: 15px;
+    }
+    
+    .popup-content {
+        padding: 15px;
+    }
+    
+    .price-display .price {
+        font-size: 24px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+        color: #f8f9fa;
+    }
+    
+    .status,
+    .price-section,
+    .error-section,
+    .popup-footer {
+        background: #495057;
+        color: #f8f9fa;
+    }
+    
+    .popup-footer {
+        border-top-color: #6c757d;
+    }
+    
+    .breakdown-label {
+        color: #adb5bd;
+    }
+    
+    .breakdown-value {
+        color: #f8f9fa;
+    }
+    
+    .help-text small {
+        color: #adb5bd;
+    }
+}
