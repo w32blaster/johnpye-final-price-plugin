@@ -292,14 +292,30 @@
             utils.applyStyles(breakdownDiv, CONFIG.display.styles.breakdown);
             
             const deliveryText = delivery !== null ? utils.formatCurrency(delivery) : 'Not found';
-            breakdownDiv.innerHTML = `
-                <div>Minimum bid: ${utils.formatCurrency(minBid)}</div>
-                <div>VAT (20%): ${utils.formatCurrency(breakdown.vat)}</div>
-                <div>Buyer's premium (25%): ${utils.formatCurrency(breakdown.buyerPremium)}</div>
-                <div>VAT on premium (20%): ${utils.formatCurrency(breakdown.vatBuyerPremium)}</div>
-                <div>Delivery: ${deliveryText}</div>
-                ${delivery !== null ? `<div>VAT on delivery (20%): ${utils.formatCurrency(breakdown.vatDelivery)}</div>` : ''}
-            `;
+            
+            // Create breakdown items safely using DOM manipulation
+            const breakdownItems = [
+                { label: 'Minimum bid:', value: utils.formatCurrency(minBid) },
+                { label: 'VAT (20%):', value: utils.formatCurrency(breakdown.vat) },
+                { label: 'Buyer\'s premium (25%):', value: utils.formatCurrency(breakdown.buyerPremium) },
+                { label: 'VAT on premium (20%):', value: utils.formatCurrency(breakdown.vatBuyerPremium) },
+                { label: 'Delivery:', value: deliveryText }
+            ];
+            
+            // Add VAT on delivery only if delivery cost was found
+            if (delivery !== null) {
+                breakdownItems.push({ 
+                    label: 'VAT on delivery (20%):', 
+                    value: utils.formatCurrency(breakdown.vatDelivery) 
+                });
+            }
+            
+            // Create each breakdown item as a div element
+            breakdownItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.textContent = `${item.label} ${item.value}`;
+                breakdownDiv.appendChild(itemDiv);
+            });
             
             container.appendChild(breakdownDiv);
             
