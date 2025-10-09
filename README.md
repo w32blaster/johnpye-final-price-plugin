@@ -2,6 +2,9 @@
 
 A professional cross-browser extension that automatically calculates and displays the total final price including VAT, buyer's premium, and delivery costs for John Pye auction items. This tool helps bidders understand the complete cost before placing bids.
 
+## Store links:
+    - Mozilla addons: https://addons.mozilla.org/en-GB/firefox/addon/john-pye-price-calculator/
+
 ## Project Description and Purpose
 
 John Pye Auctions displays minimum bid amounts on lot detail pages, but bidders must manually calculate additional costs like VAT (20%), buyer's premium (25% + VAT), and delivery charges. This extension automates that calculation, providing transparency and helping users make informed bidding decisions.
