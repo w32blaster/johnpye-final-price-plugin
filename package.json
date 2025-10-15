@@ -2,6 +2,7 @@
   "name": "johnpye-final-price-plugin",
   "version": "1.0.0",
   "description": "Browser extension to calculate and display final prices on John Pye Auctions lot detail pages",
+  "type": "module",
   "main": "src/content.js",
   "scripts": {
     "build": "npm run build:chrome && npm run build:firefox",
@@ -20,7 +21,7 @@
     "package:firefox": "cd dist/firefox && zip -r ../../johnpye-extension-firefox.zip .",
     "package": "npm run build && npm run package:chrome && npm run package:firefox",
     "lint": "eslint src/",
-    "test": "echo 'No tests specified yet'"
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest -i --colors --verbose --detectOpenHandles --passWithNoTests"
   },
   "keywords": [
     "browser-extension",
@@ -34,6 +35,8 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.57.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
     "nodemon": "^3.0.2"
   },
   "dependencies": {
@@ -49,5 +52,10 @@
   "bugs": {
     "url": "https://github.com/username/johnpye-final-price-plugin/issues"
   },
-  "homepage": "https://github.com/username/johnpye-final-price-plugin#readme"
+  "homepage": "https://github.com/username/johnpye-final-price-plugin#readme",
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+    "transform": {}
+  }
 }

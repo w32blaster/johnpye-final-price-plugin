@@ -1,83 +1,68 @@
 // John Pye Final Price Calculator - Content Script
 // This script runs on John Pye auction lot detail pages to calculate and display final prices
+import { extractCurrency } from './parse.js';
+
+ // Configuration based on DOM analysis
+export const CONFIG = {
+    // Selectors based on actual DOM analysis
+    selectors: {
+        minBid: '.detail__minbid .Bidding_Listing_MinPrice .NumberPart',
+        minBidContainer: '.detail__minbid',
+        delivery: [
+            '.shipping-table td',
+            '.table.shipping-table tbody tr td:last-child'
+        ],
+        container: '.form-group',
+        priceContainer: '.detail__minbid'
+    },
+    
+    // Text patterns for extracting prices
+    patterns: {
+        currency: /£([\d,]+(?:\.\d{2})?)/g,
+        minBidText: /minimum\s+bid/i,
+        deliveryText: /delivery|shipping|postage|transport/i
+    },
+    
+    // Display configuration
+    display: {
+        finalPriceClass: 'johnpye-final-price',
+        containerClass: 'johnpye-price-container',
+        styles: {
+            container: {
+                margin: '10px 0',
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                border: '2px solid #28a745',
+                borderRadius: '6px',
+                fontFamily: 'Arial, sans-serif'
+            },
+            label: {
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: '#28a745',
+                marginRight: '8px'
+            },
+            price: {
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: '#dc3545'
+            },
+            breakdown: {
+                fontSize: '14px',
+                color: '#6c757d',
+                marginTop: '4px'
+            }
+        }
+    }
+};
+
 
 (function() {
     'use strict';
 
-    // Configuration based on DOM analysis
-    const CONFIG = {
-        // Selectors based on actual DOM analysis
-        selectors: {
-            minBid: '.detail__minbid .Bidding_Listing_MinPrice .NumberPart',
-            minBidContainer: '.detail__minbid',
-            delivery: [
-                '.shipping-table td',
-                '.table.shipping-table tbody tr td:last-child'
-            ],
-            container: '.form-group',
-            priceContainer: '.detail__minbid'
-        },
-        
-        // Text patterns for extracting prices
-        patterns: {
-            currency: /£([\d,]+(?:\.\d{2})?)/g,
-            minBidText: /minimum\s+bid/i,
-            deliveryText: /delivery|shipping|postage|transport/i
-        },
-        
-        // Display configuration
-        display: {
-            finalPriceClass: 'johnpye-final-price',
-            containerClass: 'johnpye-price-container',
-            styles: {
-                container: {
-                    margin: '10px 0',
-                    padding: '12px',
-                    backgroundColor: '#f8f9fa',
-                    border: '2px solid #28a745',
-                    borderRadius: '6px',
-                    fontFamily: 'Arial, sans-serif'
-                },
-                label: {
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                    color: '#28a745',
-                    marginRight: '8px'
-                },
-                price: {
-                    fontSize: '20px',
-                    fontWeight: 'bold',
-                    color: '#dc3545'
-                },
-                breakdown: {
-                    fontSize: '14px',
-                    color: '#6c757d',
-                    marginTop: '4px'
-                }
-            }
-        }
-    };
 
     // Utility functions
     const utils = {
-        /**
-         * Extract currency amount from text
-         * @param {string} text - Text containing currency
-         * @returns {number|null} - Extracted amount or null if not found
-         */
-        extractCurrency: function(text) {
-            if (!text) return null;
-            
-            const matches = text.match(CONFIG.patterns.currency);
-            if (!matches) return null;
-            
-            // Get the first match and convert to number
-            const match = matches[0];
-            const numberStr = match.replace('£', '').replace(/,/g, '');
-            const amount = parseFloat(numberStr);
-            
-            return isNaN(amount) ? null : amount;
-        },
 
         /**
          * Format currency for display
@@ -152,7 +137,7 @@
             element = utils.findElement(CONFIG.selectors.minBidContainer);
             if (element) {
                 const text = element.textContent.trim();
-                const amount = utils.extractCurrency(text);
+                const amount = extractCurrency(text, CONFIG.patterns.currency);
                 
                 if (amount !== null) {
                     utils.debug('Found minimum bid (container fallback):', { text, amount, element });
@@ -185,7 +170,7 @@
                         
                         const description = descriptionCell.textContent.trim().toLowerCase();
                         const priceText = priceCell.textContent.trim();
-                        const amount = utils.extractCurrency(priceText);
+                        const amount = extractCurrency(priceText, CONFIG.patterns.currency);
                         
                         // Skip collection options (they contain "collection" in the description)
                         if (description.includes('collection')) {
@@ -219,7 +204,7 @@
                     CONFIG.patterns.currency.test(element.textContent) &&
                     element.children.length === 0) { // Only leaf elements
                     
-                    const amount = utils.extractCurrency(element.textContent);
+                    const amount = extractCurrency(element.textContent, CONFIG.patterns.currency);
                     
                     if (amount !== null) {
                         utils.debug('Found delivery cost (fallback):', { text, amount, element });
