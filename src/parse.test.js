@@ -2,7 +2,7 @@
 // This file tests the currency extraction functionality from content.js
 
 import { extractCurrency } from './parse.js';
-import { CONFIG } from './content.js';
+import { CONFIG } from './config.js';
 
 // Simple test runner
 describe('Check that the price is parsed accordingly', () => {
