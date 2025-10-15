@@ -41,34 +41,17 @@ describe('Check that the price is parsed accordingly', () => {
         { input: '£1,234,567.89', expected: 1234567.89, description: 'Very large currency amount' }
     ];
     
-    let passed = 0;
-    let failed = 0;
-    
-    console.log('Running extractCurrency tests...\n');
-    
     tests.forEach((test, index) => {
 
-        it(test.description, () => {
+        it(index + ' ' + test.description, () => {
 
             // When:
             const result = extractCurrency(test.input, CONFIG.patterns.currency);
             
             // Then:
-            const success = result === test.expected;
-            
-            if (success) {
-                passed++;
-                console.log(`✓ Test ${index + 1}: ${test.description}`);
-                return
-            }
-            
-            failed++;
-            console.log(`✗ Test ${index + 1}: ${test.description}`);
-            console.log(`  Expected: ${test.expected}, Got: ${result}`);
-            console.log(`  Input: "${test.input}"`);
-
+            expect(result).toBe(test.expected);
         });
 
     });
 
-})
+});
