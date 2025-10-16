@@ -241,10 +241,21 @@ import { CONFIG } from './config.js';
                 });
             }
             
-            // Create each breakdown item as a div element
+            // Create each breakdown item as a two-column div element
             breakdownItems.forEach(item => {
                 const itemDiv = document.createElement('div');
-                itemDiv.textContent = `${item.label} ${item.value}`;
+                utils.applyStyles(itemDiv, CONFIG.display.styles.breakdownItem);
+                
+                const labelSpan = document.createElement('span');
+                labelSpan.textContent = item.label;
+                utils.applyStyles(labelSpan, CONFIG.display.styles.breakdownLabel);
+                
+                const valueSpan = document.createElement('span');
+                valueSpan.textContent = item.value;
+                utils.applyStyles(valueSpan, CONFIG.display.styles.breakdownValue);
+                
+                itemDiv.appendChild(labelSpan);
+                itemDiv.appendChild(valueSpan);
                 breakdownDiv.appendChild(itemDiv);
             });
             

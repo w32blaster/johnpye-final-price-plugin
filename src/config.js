@@ -48,6 +48,22 @@ export const CONFIG = {
                 fontSize: '14px',
                 color: '#6c757d',
                 marginTop: '4px'
+            },
+            breakdownItem: {
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '2px 0',
+                borderBottom: '1px solid #e9ecef'
+            },
+            breakdownLabel: {
+                flex: '1',
+                textAlign: 'left'
+            },
+            breakdownValue: {
+                fontWeight: 'bold',
+                textAlign: 'right',
+                minWidth: '80px'
             }
         }
     }
