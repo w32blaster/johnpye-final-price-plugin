@@ -70,8 +70,8 @@ import { CONFIG } from './config.js';
             let element = utils.findElement(CONFIG.selectors.minBid);
             
             if (element) {
-                const text = element.textContent.trim();
-                const amount = parseFloat(text);
+                const text = element.textContent.trim(); // this is number only, without a currency symbol
+                const amount = extractCurrency(text);
                 
                 if (!isNaN(amount)) {
                     utils.debug('Found minimum bid (NumberPart):', { text, amount, element });
@@ -82,8 +82,8 @@ import { CONFIG } from './config.js';
             // Fallback: look in the container for any currency
             element = utils.findElement(CONFIG.selectors.minBidContainer);
             if (element) {
-                const text = element.textContent.trim();
-                const amount = extractCurrency(element.textContent.trim(), CONFIG.patterns.currency);
+                const text = element.textContent.trim(); // with currency symbol
+                const amount = extractCurrency(element.textContent.trim());
                 
                 if (amount !== null) {
                     utils.debug('Found minimum bid (container fallback):', { text, amount, element });
