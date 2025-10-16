@@ -2,25 +2,22 @@
   "name": "johnpye-final-price-plugin",
   "version": "1.0.0",
   "description": "Browser extension to calculate and display final prices on John Pye Auctions lot detail pages",
+  "type": "module",
   "main": "src/content.js",
   "scripts": {
-    "build": "npm run build:chrome && npm run build:firefox",
-    "build:chrome": "npm run clean:chrome && npm run copy:chrome && npm run manifest:chrome",
-    "build:firefox": "npm run clean:firefox && npm run copy:firefox && npm run manifest:firefox",
+    "build": "npm run clean && rollup -c",
+    "build:chrome": "npm run clean:chrome && rollup -c --configPlugin chrome",
+    "build:firefox": "npm run clean:firefox && rollup -c --configPlugin firefox",
     "clean": "npm run clean:chrome && npm run clean:firefox",
     "clean:chrome": "rm -rf dist/chrome",
     "clean:firefox": "rm -rf dist/firefox",
-    "copy:chrome": "mkdir -p dist/chrome && cp -r src/* dist/chrome/",
-    "copy:firefox": "mkdir -p dist/firefox && cp -r src/* dist/firefox/",
-    "manifest:chrome": "cp manifests/chrome.json dist/chrome/manifest.json",
-    "manifest:firefox": "cp manifests/firefox.json dist/firefox/manifest.json",
     "dev": "npm run build && npm run watch",
     "watch": "nodemon --watch src --watch manifests --exec 'npm run build'",
     "package:chrome": "cd dist/chrome && zip -r ../../johnpye-extension-chrome.zip .",
     "package:firefox": "cd dist/firefox && zip -r ../../johnpye-extension-firefox.zip .",
     "package": "npm run build && npm run package:chrome && npm run package:firefox",
     "lint": "eslint src/",
-    "test": "echo 'No tests specified yet'"
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest -i --colors --verbose --detectOpenHandles --passWithNoTests"
   },
   "keywords": [
     "browser-extension",
@@ -33,8 +30,14 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.8",
+    "@rollup/plugin-node-resolve": "^16.0.3",
     "eslint": "^8.57.0",
-    "nodemon": "^3.0.2"
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "nodemon": "^3.0.2",
+    "rollup": "^4.52.4",
+    "rollup-plugin-copy": "^3.5.0"
   },
   "dependencies": {
     "webextension-polyfill": "^0.10.0"
@@ -49,5 +52,12 @@
   "bugs": {
     "url": "https://github.com/username/johnpye-final-price-plugin/issues"
   },
-  "homepage": "https://github.com/username/johnpye-final-price-plugin#readme"
+  "homepage": "https://github.com/username/johnpye-final-price-plugin#readme",
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "transform": {}
+  }
 }
