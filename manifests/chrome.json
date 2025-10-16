@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "John Pye Final Price Calculator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Calculates and displays the final price (minimum bid + delivery) on John Pye Auctions lot detail pages",
   "permissions": [
     "activeTab"
