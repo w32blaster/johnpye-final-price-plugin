@@ -1,8 +1,8 @@
-// John Pye Final Price Calculator - Content Script
-// This script runs on John Pye auction lot detail pages to calculate and display final prices
 import { extractCurrency } from './parse.js';
 import { CONFIG } from './config.js';
 
+// John Pye Final Price Calculator - Content Script
+// This script runs on John Pye auction lot detail pages to calculate and display final prices
 (function() {
     'use strict';
 
