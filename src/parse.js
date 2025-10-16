@@ -12,7 +12,9 @@ export function extractCurrency(text, pattern) {
     
     // Get the first match and convert to number
     const match = matches[0];
-    const numberStr = match.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
+    // Remove all the symbols, except numbers and dots
+    
+    const numberStr = match.replace(/[^0-9.]/g, '');
     const amount = parseFloat(numberStr);
     
     return isNaN(amount) ? null : amount;
