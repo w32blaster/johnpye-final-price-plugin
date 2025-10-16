@@ -15,7 +15,7 @@ export const CONFIG = {
     
     // Text patterns for extracting prices
     patterns: {
-        currency: /^£?([\d,]+(?:\.\d{2})?)$/g,
+        currency: /£?([\d,]+(?:\.\d{2})?)/g,
         minBidText: /minimum\s+bid/i,
         deliveryText: /delivery|shipping|postage|transport/i
     },

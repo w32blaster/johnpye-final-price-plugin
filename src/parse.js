@@ -9,8 +9,8 @@ import { CONFIG } from './config.js';
 export function extractCurrency(text) {
     if (!text) return null;
 
-    text = text.trim();
     const matches = text.match(CONFIG.patterns.currency);
+    console.log(text + ' returns ' + matches);
     if (!matches) return null;
     
     // Get the first match and convert to number
