@@ -116,7 +116,6 @@ import { CONFIG } from './config.js';
                         
                         const description = descriptionCell.textContent.trim().toLowerCase();
                         const priceText = priceCell.textContent.trim();
-                        console.log('Delivery price found: ' + priceText);
                         const amount = extractCurrency(priceText);
                         
                         // Skip collection options (they contain "collection" in the description)

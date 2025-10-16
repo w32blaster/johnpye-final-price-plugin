@@ -10,7 +10,6 @@ export function extractCurrency(text) {
     if (!text) return null;
 
     const matches = text.match(CONFIG.patterns.currency);
-    console.log(text + ' returns ' + matches);
     if (!matches) return null;
     
     // Get the first match and convert to number
