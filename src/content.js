@@ -140,27 +140,52 @@ import { CONFIG } from './config.js';
                 }
             }
             
-            // Fallback: search for any element containing delivery keywords and currency
-            const allElements = document.querySelectorAll('*');
-            
-            for (const element of allElements) {
-                const text = element.textContent.toLowerCase();
-                
-                if (CONFIG.patterns.deliveryText.test(text) && 
-                    CONFIG.patterns.currency.test(element.textContent) &&
-                    element.children.length === 0) { // Only leaf elements
-                    
-                    const amount = extractCurrency(element.textContent, CONFIG.patterns.currency);
-                    
-                    if (amount !== null) {
-                        utils.debug('Found delivery cost (fallback):', { amount, element });
-                        return amount;
-                    }
-                }
-            }
-            
             utils.debug('Delivery cost not found');
             return null;
+        },
+
+        /**
+         * Detect the lot location from the shipping info panel
+         * @returns {string|null} - Location string or null if not found
+         */
+        detectLocation: function() {
+            const shippingInfoPanel = document.querySelector('.panel-body.description.shipping-info-panel');
+
+            if (!shippingInfoPanel) {
+                utils.debug('Shipping info panel not found');
+                return null;
+            }
+
+            // Get the first paragraph's strong element
+            const firstParagraph = shippingInfoPanel.querySelector('p strong');
+
+            if (!firstParagraph) {
+                utils.debug('Location information not found in shipping panel');
+                return null;
+            }
+
+            const locationText = firstParagraph.textContent.trim();
+            utils.debug('Found location text:', locationText);
+
+            // Extract the location (first part before the dash)
+            const locationMatch = locationText.match(/^([^-]+)/);
+            if (locationMatch) {
+                const location = locationMatch[1].trim();
+                utils.debug('Extracted location:', location);
+                return location;
+            }
+
+            return null;
+        },
+
+        /**
+         * Check if the location is in Spain
+         * @param {string} location - Location string to check
+         * @returns {boolean} - True if location is Spain
+         */
+        isSpainLocation: function(location) {
+            if (!location) return false;
+            return location.toLowerCase().includes('spain');
         },
 
         /**
@@ -170,7 +195,7 @@ import { CONFIG } from './config.js';
         findInjectionPoint: function() {
             // Find the minimum bid container
             const minBidContainer = utils.findElement(CONFIG.selectors.minBidContainer);
-            
+
             if (minBidContainer) {
                 // Use the parent form-group container
                 const formGroup = minBidContainer.closest('.form-group');
@@ -178,14 +203,43 @@ import { CONFIG } from './config.js';
                     utils.debug('Found injection point (form-group):', formGroup);
                     return formGroup;
                 }
-                
+
                 // Fallback: use the parent element of the minimum bid container
                 utils.debug('Using minimum bid container parent as injection point:', minBidContainer.parentElement);
                 return minBidContainer.parentElement;
             }
-            
+
             utils.debug('No suitable injection point found');
             return null;
+        },
+
+        /**
+         * Create and display a message for Spain locations
+         * @returns {Element} - The created message element
+         */
+        createSpainLocationMessage: function() {
+            const container = document.createElement('div');
+            container.className = CONFIG.display.containerClass;
+            utils.applyStyles(container, CONFIG.display.styles.container);
+
+            const messageDiv = document.createElement('div');
+            utils.applyStyles(messageDiv, {
+                padding: '10px',
+                backgroundColor: '#fff3cd',
+                border: '1px solid #ffc107',
+                borderRadius: '4px',
+                color: '#856404'
+            });
+
+            const messageText = document.createElement('p');
+            messageText.textContent = 'Final Price Calculator is not available for items located in Spain.';
+            messageText.style.margin = '0';
+            messageText.style.fontWeight = 'bold';
+
+            messageDiv.appendChild(messageText);
+            container.appendChild(messageDiv);
+
+            return container;
         },
 
         /**
@@ -270,11 +324,44 @@ import { CONFIG } from './config.js';
         calculateAndDisplay: function() {
             try {
                 utils.debug('Starting final price calculation...');
-                
+
                 // Remove any existing displays
                 const existingDisplays = document.querySelectorAll(`.${CONFIG.display.containerClass}`);
                 existingDisplays.forEach(display => display.remove());
-                
+
+                // Detect location
+                const location = this.detectLocation();
+                utils.debug('Detected location:', location);
+
+                // Check if location is Spain
+                if (location && this.isSpainLocation(location)) {
+                    utils.debug('Spain location detected, showing message instead of calculator');
+
+                    // Find injection point
+                    const injectionPoint = this.findInjectionPoint();
+                    if (!injectionPoint) {
+                        utils.debug('Cannot display message: no suitable injection point found');
+                        return;
+                    }
+
+                    // Create and inject Spain location message
+                    const messageDisplay = this.createSpainLocationMessage();
+
+                    // Insert after the minimum bid container within the form group
+                    const minBidContainer = utils.findElement(CONFIG.selectors.minBidContainer);
+                    if (minBidContainer && injectionPoint.contains(minBidContainer)) {
+                        minBidContainer.insertAdjacentElement('afterend', messageDisplay);
+                    } else {
+                        injectionPoint.appendChild(messageDisplay);
+                    }
+
+                    utils.debug('Spain location message displayed successfully');
+                    return;
+                }
+
+                // Proceed with UK location logic
+                utils.debug('UK location detected, proceeding with calculation');
+
                 // Find minimum bid
                 const minBid = this.findMinimumBid();
                 if (minBid === null) {
@@ -332,6 +419,21 @@ import { CONFIG } from './config.js';
          * Store calculation data globally for popup access
          */
         storeCalculationData: function() {
+            // Detect location first
+            const location = this.detectLocation();
+
+            // Check if location is Spain
+            if (location && this.isSpainLocation(location)) {
+                window.johnPyePriceData = {
+                    finalPrice: null,
+                    minBid: null,
+                    delivery: null,
+                    error: 'Calculator not available for items in Spain'
+                };
+                utils.debug('Price data stored (Spain location):', window.johnPyePriceData);
+                return;
+            }
+
             const minBid = this.findMinimumBid();
             const delivery = this.findDeliveryCost();
             let finalPrice = null;
