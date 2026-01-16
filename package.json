@@ -38,7 +38,8 @@
     "jest-environment-jsdom": "^30.2.0",
     "nodemon": "^3.0.2",
     "rollup": "^4.52.4",
-    "rollup-plugin-copy": "^3.5.0"
+    "rollup-plugin-copy": "^3.5.0",
+    "addons-linter": "^9.4.0"
   },
   "dependencies": {
     "webextension-polyfill": "^0.10.0"
