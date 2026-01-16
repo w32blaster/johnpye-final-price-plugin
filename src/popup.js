@@ -108,7 +108,7 @@
     }
     
     // Handle successful price calculation
-    function handlePriceData(data) {        
+    function handlePriceData(data) {
         if (data.finalPrice !== null && data.minBid !== null) {
             updateStatus('active', '✅', 'Price calculated');
             showPriceData(data);
