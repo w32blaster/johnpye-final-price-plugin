@@ -17,6 +17,7 @@
     "package:firefox": "cd dist/firefox && zip -r ../../johnpye-extension-firefox.zip .",
     "package": "npm run build && npm run package:chrome && npm run package:firefox",
     "lint": "eslint src/",
+    "addon-lint": "npm run package && addons-linter ./johnpye-extension-firefox.zip",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest -i --colors --verbose --detectOpenHandles --passWithNoTests"
   },
   "keywords": [
@@ -37,7 +38,8 @@
     "jest-environment-jsdom": "^30.2.0",
     "nodemon": "^3.0.2",
     "rollup": "^4.52.4",
-    "rollup-plugin-copy": "^3.5.0"
+    "rollup-plugin-copy": "^3.5.0",
+    "addons-linter": "^9.4.0"
   },
   "dependencies": {
     "webextension-polyfill": "^0.10.0"

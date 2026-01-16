@@ -11,7 +11,6 @@
     
     // State
     let currentTab = null;
-    let priceData = null;
     
     // Initialize popup
     function init() {
@@ -110,8 +109,6 @@
     
     // Handle successful price calculation
     function handlePriceData(data) {
-        priceData = data;
-        
         if (data.finalPrice !== null && data.minBid !== null) {
             updateStatus('active', '✅', 'Price calculated');
             showPriceData(data);
@@ -218,17 +215,6 @@
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
-    }
-    
-    // Helper function to format time ago
-    function timeAgo(date) {
-        const now = new Date();
-        const diff = Math.floor((now - date) / 1000);
-        
-        if (diff < 60) return 'just now';
-        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-        return `${Math.floor(diff / 86400)}d ago`;
     }
     
 })();
