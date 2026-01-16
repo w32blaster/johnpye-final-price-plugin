@@ -17,6 +17,7 @@
     "package:firefox": "cd dist/firefox && zip -r ../../johnpye-extension-firefox.zip .",
     "package": "npm run build && npm run package:chrome && npm run package:firefox",
     "lint": "eslint src/",
+    "addon-lint": "addons-linter .",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest -i --colors --verbose --detectOpenHandles --passWithNoTests"
   },
   "keywords": [
