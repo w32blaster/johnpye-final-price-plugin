@@ -7,12 +7,26 @@
     "activeTab"
   ],
   "host_permissions": [
-    "https://www.johnpyeauctions.co.uk/*"
+    "https://www.johnpyeauctions.co.uk/*",
+    "https://johnpyevehicles.co.uk/*"
   ],
   "content_scripts": [
     {
       "matches": [
         "https://www.johnpyeauctions.co.uk/Event/LotDetails/*"
+      ],
+      "js": [
+        "lib/webextension-polyfill.js",
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://johnpyevehicles.co.uk/*"
       ],
       "js": [
         "lib/webextension-polyfill.js",
@@ -46,7 +60,10 @@
   "web_accessible_resources": [
     {
       "resources": ["icons/*"],
-      "matches": ["https://www.johnpyeauctions.co.uk/*"]
+      "matches": [
+        "https://www.johnpyeauctions.co.uk/*",
+        "https://johnpyevehicles.co.uk/*"
+      ]
     }
   ],
   "minimum_chrome_version": "88"

@@ -56,15 +56,16 @@
             return;
         }
         
-        const isJohnPyePage = currentTab.url.includes('johnpyeauctions.co.uk/Event/LotDetails/');
-        
+        const isJohnPyePage = currentTab.url.includes('johnpyeauctions.co.uk/Event/LotDetails/') ||
+            currentTab.url.includes('johnpyevehicles.co.uk/');
+
         if (!isJohnPyePage) {
             updateStatus('inactive', '📍', 'Not on a John Pye lot page');
-            showError('Navigate to a John Pye auction lot details page to use this extension.', 
+            showError('Navigate to a John Pye auction lot details page to use this extension.',
                 `Current page: ${new URL(currentTab.url).hostname}`);
             return;
         }
-        
+
         updateStatus('ready', '🔄', 'Ready to calculate - Click refresh');
     }
     
@@ -75,15 +76,16 @@
             return;
         }
         
-        const isJohnPyePage = currentTab.url.includes('johnpyeauctions.co.uk/Event/LotDetails/');
-        
+        const isJohnPyePage = currentTab.url.includes('johnpyeauctions.co.uk/Event/LotDetails/') ||
+            currentTab.url.includes('johnpyevehicles.co.uk/');
+
         if (!isJohnPyePage) {
             updateStatus('inactive', '📍', 'Not on a John Pye lot page');
-            showError('Navigate to a John Pye auction lot details page to use this extension.', 
+            showError('Navigate to a John Pye auction lot details page to use this extension.',
                 `Current page: ${new URL(currentTab.url).hostname}`);
             return;
         }
-        
+
         updateStatus('active', '⏳', 'Calculating price...');
         calculatePrice();
     }
@@ -117,11 +119,11 @@
             
             let errorMsg = 'Unable to find required price information';
             let details = [];
-            
+
             if (data.minBid === null) {
                 details.push('• Minimum bid not found');
             }
-            if (data.delivery === null) {
+            if (!data.isVehiclesSite && data.delivery === null) {
                 details.push('• Delivery cost not found');
             }
             
@@ -169,12 +171,20 @@
         // Update price display
         finalPriceEl.textContent = formatCurrency(data.finalPrice);
         minBidEl.textContent = formatCurrency(data.minBid);
-        
-        if (data.delivery !== null) {
-            deliveryCostEl.textContent = formatCurrency(data.delivery);
+
+        // Hide delivery row entirely for the vehicles site
+        const deliveryRow = deliveryCostEl.closest('.breakdown-item');
+        if (data.isVehiclesSite) {
+            if (deliveryRow) deliveryRow.style.display = 'none';
         } else {
-            deliveryCostEl.textContent = 'Not found';
-            deliveryCostEl.style.color = '#ffc107';
+            if (deliveryRow) deliveryRow.style.display = '';
+            if (data.delivery !== null) {
+                deliveryCostEl.textContent = formatCurrency(data.delivery);
+                deliveryCostEl.style.color = '';
+            } else {
+                deliveryCostEl.textContent = 'Not found';
+                deliveryCostEl.style.color = '#ffc107';
+            }
         }
         
         // Show price section

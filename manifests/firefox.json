@@ -17,6 +17,19 @@
         "styles.css"
       ],
       "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://johnpyevehicles.co.uk/*"
+      ],
+      "js": [
+        "lib/webextension-polyfill.js",
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "run_at": "document_end"
     }
   ],
   "icons": {
