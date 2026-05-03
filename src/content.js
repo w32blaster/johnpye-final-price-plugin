@@ -248,9 +248,10 @@ import { CONFIG } from './config.js';
          * @param {number} minBid - The minimum bid amount
          * @param {number|null} delivery - The delivery cost (null if not found)
          * @param {Object} breakdown - Calculation breakdown
+         * @param {boolean} isVehicles - Whether we're on the vehicles site (no delivery)
          * @returns {Element} - The created display element
          */
-        createPriceDisplay: function(finalPrice, minBid, delivery, breakdown) {
+        createPriceDisplay: function(finalPrice, minBid, delivery, breakdown, isVehicles) {
             // Main container
             const container = document.createElement('div');
             container.className = CONFIG.display.containerClass;
@@ -276,23 +277,24 @@ import { CONFIG } from './config.js';
             const breakdownDiv = document.createElement('div');
             utils.applyStyles(breakdownDiv, CONFIG.display.styles.breakdown);
             
-            const deliveryText = delivery !== null ? utils.formatCurrency(delivery) : 'Not found';
-            
             // Create breakdown items safely using DOM manipulation
             const breakdownItems = [
                 { label: 'Minimum bid:', value: utils.formatCurrency(minBid) },
                 { label: 'VAT (20%):', value: utils.formatCurrency(breakdown.vat) },
                 { label: 'Buyer\'s premium (25%):', value: utils.formatCurrency(breakdown.buyerPremium) },
-                { label: 'VAT on premium (20%):', value: utils.formatCurrency(breakdown.vatBuyerPremium) },
-                { label: 'Delivery:', value: deliveryText }
+                { label: 'VAT on premium (20%):', value: utils.formatCurrency(breakdown.vatBuyerPremium) }
             ];
-            
-            // Add VAT on delivery only if delivery cost was found
-            if (delivery !== null) {
-                breakdownItems.push({ 
-                    label: 'VAT on delivery (20%):', 
-                    value: utils.formatCurrency(breakdown.vatDelivery) 
-                });
+
+            // Add delivery rows only for the auctions site
+            if (!isVehicles) {
+                const deliveryText = delivery !== null ? utils.formatCurrency(delivery) : 'Not found';
+                breakdownItems.push({ label: 'Delivery:', value: deliveryText });
+                if (delivery !== null) {
+                    breakdownItems.push({
+                        label: 'VAT on delivery (20%):',
+                        value: utils.formatCurrency(breakdown.vatDelivery)
+                    });
+                }
             }
             
             // Create each breakdown item as a two-column div element
@@ -369,36 +371,38 @@ import { CONFIG } from './config.js';
                     return;
                 }
                 
-                // Find delivery cost
-                const delivery = this.findDeliveryCost();
-                
+                // Find delivery cost (vehicles site has no delivery — collection only)
+                const isVehicles = this.isVehiclesSite();
+                const delivery = isVehicles ? null : this.findDeliveryCost();
+
                 // Calculate final price using the specified formula
                 const vat = minBid * 0.2;
                 const buyerPremium = minBid * 0.25;
                 const vatBuyerPremium = buyerPremium * 0.2;
-                const vatDelivery = (delivery || 0) * 0.2;
-                const finalPrice = minBid + vat + buyerPremium + vatBuyerPremium + (delivery || 0) + vatDelivery;
-                
+                const vatDelivery = isVehicles ? 0 : (delivery || 0) * 0.2;
+                const finalPrice = minBid + vat + buyerPremium + vatBuyerPremium + (isVehicles ? 0 : (delivery || 0)) + vatDelivery;
+
                 utils.debug('Price calculation:', {
                     minBid,
                     delivery,
+                    isVehicles,
                     vat: vat.toFixed(2),
                     buyerPremium: buyerPremium.toFixed(2),
                     vatBuyerPremium: vatBuyerPremium.toFixed(2),
                     vatDelivery: vatDelivery.toFixed(2),
                     finalPrice
                 });
-                
+
                 // Find injection point
                 const injectionPoint = this.findInjectionPoint();
                 if (!injectionPoint) {
                     utils.debug('Cannot display: no suitable injection point found');
                     return;
                 }
-                
+
                 // Create and inject display
                 const breakdown = { vat, buyerPremium, vatBuyerPremium, vatDelivery };
-                const priceDisplay = this.createPriceDisplay(finalPrice, minBid, delivery, breakdown);
+                const priceDisplay = this.createPriceDisplay(finalPrice, minBid, delivery, breakdown, isVehicles);
                 
                 // Insert after the minimum bid container within the form group
                 const minBidContainer = utils.findElement(CONFIG.selectors.minBidContainer);
@@ -434,8 +438,9 @@ import { CONFIG } from './config.js';
                 return;
             }
 
+            const isVehicles = this.isVehiclesSite();
             const minBid = this.findMinimumBid();
-            const delivery = this.findDeliveryCost();
+            const delivery = isVehicles ? null : this.findDeliveryCost();
             let finalPrice = null;
             let error = null;
 
@@ -443,8 +448,8 @@ import { CONFIG } from './config.js';
                 const vat = minBid * 0.2;
                 const buyerPremium = minBid * 0.25;
                 const vatBuyerPremium = buyerPremium * 0.2;
-                const vatDelivery = (delivery || 0) * 0.2;
-                finalPrice = minBid + vat + buyerPremium + vatBuyerPremium + (delivery || 0) + vatDelivery;
+                const vatDelivery = isVehicles ? 0 : (delivery || 0) * 0.2;
+                finalPrice = minBid + vat + buyerPremium + vatBuyerPremium + (isVehicles ? 0 : (delivery || 0)) + vatDelivery;
             } else {
                 error = 'Minimum bid not found';
             }
@@ -453,6 +458,7 @@ import { CONFIG } from './config.js';
                 finalPrice,
                 minBid,
                 delivery,
+                isVehiclesSite: isVehicles,
                 error
             };
 
@@ -460,14 +466,24 @@ import { CONFIG } from './config.js';
         },
 
         /**
+         * Check if we're on the John Pye Vehicles site
+         * @returns {boolean}
+         */
+        isVehiclesSite: function() {
+            return window.location.hostname.includes('johnpyevehicles.co.uk');
+        },
+
+        /**
          * Initialize the extension
          */
         init: function() {
             utils.debug('John Pye Final Price Calculator initializing...');
-            
-            // Check if we're on the right page
-            if (!window.location.href.includes('johnpyeauctions.co.uk/Event/LotDetails/')) {
-                utils.debug('Not on a lot details page, exiting');
+
+            // Check if we're on a supported page
+            const onAuctionsPage = window.location.href.includes('johnpyeauctions.co.uk/Event/LotDetails/');
+            const onVehiclesPage = this.isVehiclesSite();
+            if (!onAuctionsPage && !onVehiclesPage) {
+                utils.debug('Not on a supported lot details page, exiting');
                 return;
             }
             
