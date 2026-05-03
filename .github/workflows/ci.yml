@@ -7,6 +7,26 @@ on:
     branches: [ master ]
 
 jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check version is bumped
+      run: |
+        PR_VERSION=$(node -p "require('./package.json').version")
+        git fetch origin master
+        MASTER_VERSION=$(git show origin/master:package.json | node -p "const d=require('fs').readFileSync('/dev/stdin','utf8'); JSON.parse(d).version" 2>/dev/null || echo "0.0.0")
+        echo "PR version: $PR_VERSION"
+        echo "Master version: $MASTER_VERSION"
+        if [ "$PR_VERSION" = "$MASTER_VERSION" ]; then
+          echo "ERROR: Version in package.json ($PR_VERSION) must be updated before merging into master."
+          exit 1
+        fi
+
   test:
     runs-on: ubuntu-latest
 
