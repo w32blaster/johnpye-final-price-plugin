@@ -20,7 +20,8 @@
     },
     {
       "matches": [
-        "https://johnpyevehicles.co.uk/*"
+        "https://johnpyevehicles.co.uk/*",
+        "https://www.johnpyevehicles.co.uk/*"
       ],
       "js": [
         "lib/webextension-polyfill.js",
