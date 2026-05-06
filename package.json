@@ -1,6 +1,6 @@
 {
   "name": "johnpye-final-price-plugin",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Browser extension to calculate and display final prices on John Pye Auctions lot detail pages",
   "type": "module",
   "main": "src/content.js",
