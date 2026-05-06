@@ -481,7 +481,7 @@ import { CONFIG } from './config.js';
 
             // Check if we're on a supported page
             const onAuctionsPage = window.location.href.includes('johnpyeauctions.co.uk/Event/LotDetails/');
-            const onVehiclesPage = this.isVehiclesSite();
+            const onVehiclesPage = window.location.href.includes('johnpyevehicles.co.uk/Event/LotDetails/');
             if (!onAuctionsPage && !onVehiclesPage) {
                 utils.debug('Not on a supported lot details page, exiting');
                 return;
